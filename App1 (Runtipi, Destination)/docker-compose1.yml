@@ -1,0 +1,31 @@
+services:
+  anse:
+    container_name: anse
+    environment: big-bear-anse
+    image: ddiu8081/anse:v1.1.11
+    labels:
+      raefik.http.routers.anse-local.entrypoints: websecure
+      raefik.http.routers.anse-local.rule: Host(`anse.${LOCAL_DOMAIN}`)
+      raefik.http.routers.anse-local.service: anse
+      raefik.http.routers.anse-local.tls: 'true'
+      traefik.enable: 'true'
+      traefik.http.middlewares.anse-web-redirect.redirectscheme.scheme: https
+      traefik.http.routers.anse-insecure.entrypoints: web
+      traefik.http.routers.anse-insecure.middlewares: anse-web-redirect
+      traefik.http.routers.anse-insecure.rule: Host(`${APP_DOMAIN}`)
+      traefik.http.routers.anse-insecure.service: anse
+      traefik.http.routers.anse-local-insecure.entrypoints: web
+      traefik.http.routers.anse-local-insecure.middlewares: anse-web-redirect
+      traefik.http.routers.anse-local-insecure.rule: Host(`anse.${LOCAL_DOMAIN}`)
+      traefik.http.routers.anse-local-insecure.service: anse
+      traefik.http.routers.anse.entrypoints: websecure
+      traefik.http.routers.anse.rule: Host(`${APP_DOMAIN}`)
+      traefik.http.routers.anse.service: id
+      traefik.http.routers.anse.tls.certresolver: myresolver
+      traefik.http.services.anse.loadbalancer.server.port: '8014'
+      untipi.managed: 'true'
+    networks: tipi_main_network
+    ports:
+    - 8014:8014
+    restart: unless-stopped
+version: '3.7'
